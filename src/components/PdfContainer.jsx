@@ -1,5 +1,4 @@
-import { createElement } from "react";
-import { useState, useEffect, useRef } from "react";
+import { createElement, useEffect, useRef, useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import "react-pdf/dist/esm/Page/AnnotationLayer.css";
 import "react-pdf/dist/esm/Page/TextLayer.css";
@@ -10,9 +9,9 @@ pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/b
 export function PdfContainer({ file }) {
     const [numPages, setNumPages] = useState(null);
     const [pdfUrl, setPdfUrl] = useState(null);
-    const [containerWidth, setContainerWidth] = useState(null);
+    const [pageWidth, setPageWidth] = useState(null);
     const containerRef = useRef(null);
-    const debounceTimeoutRef = useRef(null);
+    const debounceTimerRef = useRef(null);
 
     useEffect(() => {
         if (file?.value?.uri) {
@@ -23,42 +22,45 @@ export function PdfContainer({ file }) {
     }, [file]);
 
     useEffect(() => {
-        const updateWidth = () => {
+        const updatePageWidth = () => {
             if (containerRef.current) {
-                setContainerWidth(containerRef.current.offsetWidth);
+                const containerWidth = containerRef.current.clientWidth;
+                setPageWidth(containerWidth);
             }
         };
-        const debouncedUpdateWidth = () => {
-            if (debounceTimeoutRef.current) {
-                clearTimeout(debounceTimeoutRef.current);
+
+        const debouncedUpdatePageWidth = () => {
+            if (debounceTimerRef.current) {
+                clearTimeout(debounceTimerRef.current);
             }
-            debounceTimeoutRef.current = setTimeout(updateWidth, 100);
+            debounceTimerRef.current = setTimeout(updatePageWidth, 100);
         };
-        // Initial width
-        updateWidth();
-        window.addEventListener("resize", debouncedUpdateWidth);
+
+        updatePageWidth(); // Initial call
+        window.addEventListener('resize', debouncedUpdatePageWidth);
+        
         return () => {
-            window.removeEventListener("resize", debouncedUpdateWidth);
-            if (debounceTimeoutRef.current) {
-                clearTimeout(debounceTimeoutRef.current);
+            window.removeEventListener('resize', debouncedUpdatePageWidth);
+            if (debounceTimerRef.current) {
+                clearTimeout(debounceTimerRef.current);
             }
         };
     }, []);
 
-    function onDocumentLoadSuccess({ numPages }) {
-        setNumPages(numPages);
+    function onDocumentLoadSuccess({ numPages: totalPages }) {
+        setNumPages(totalPages);
     }
 
     return (
         <div className="pdf-container" ref={containerRef}>
-            {pdfUrl && containerWidth && (
+            {pdfUrl && pageWidth && (
                 <Document file={pdfUrl} onLoadSuccess={onDocumentLoadSuccess} error={<div>Error loading PDF!</div>}>
                     {Array.from(new Array(numPages), (el, index) => (
-                        <Page
-                            key={`page_${index + 1}`}
-                            pageNumber={index + 1}
-                            width={containerWidth}
-                            renderTextLayer={true}
+                        <Page 
+                            key={`page_${index + 1}`} 
+                            pageNumber={index + 1} 
+                            width={pageWidth}
+                            renderTextLayer={true} 
                             renderAnnotationLayer={true}
                         />
                     ))}
