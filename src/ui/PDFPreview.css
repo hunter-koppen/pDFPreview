@@ -4,3 +4,29 @@ Place your custom CSS here
 .widget-hello-world {
 
 }
+
+.pdf-container {
+    width: 100%;
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.pdf-container .react-pdf__Document {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.pdf-container .react-pdf__Page {
+    width: 100% !important;
+    max-width: 100%;
+}
+
+.pdf-container .react-pdf__Page canvas {
+    width: 100% !important;
+    height: auto !important;
+    max-width: 100%;
+}
