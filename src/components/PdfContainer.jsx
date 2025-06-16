@@ -37,10 +37,10 @@ export function PdfContainer({ file }) {
         };
 
         updatePageWidth(); // Initial call
-        window.addEventListener('resize', debouncedUpdatePageWidth);
-        
+        window.addEventListener("resize", debouncedUpdatePageWidth);
+
         return () => {
-            window.removeEventListener('resize', debouncedUpdatePageWidth);
+            window.removeEventListener("resize", debouncedUpdatePageWidth);
             if (debounceTimerRef.current) {
                 clearTimeout(debounceTimerRef.current);
             }
@@ -52,15 +52,16 @@ export function PdfContainer({ file }) {
     }
 
     return (
-        <div className="pdf-container" ref={containerRef}>
+        <div className="pdf-preview" ref={containerRef}>
             {pdfUrl && pageWidth && (
                 <Document file={pdfUrl} onLoadSuccess={onDocumentLoadSuccess} error={<div>Error loading PDF!</div>}>
                     {Array.from(new Array(numPages), (el, index) => (
-                        <Page 
-                            key={`page_${index + 1}`} 
-                            pageNumber={index + 1} 
+                        <Page
+                            key={`page_${index + 1}`}
+                            pageNumber={index + 1}
                             width={pageWidth}
-                            renderTextLayer={true} 
+                            className="pdf-page"
+                            renderTextLayer={true}
                             renderAnnotationLayer={true}
                         />
                     ))}
