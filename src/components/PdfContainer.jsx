@@ -12,6 +12,7 @@ export function PdfContainer({ file }) {
     const [pdfUrl, setPdfUrl] = useState(null);
     const [containerWidth, setContainerWidth] = useState(null);
     const containerRef = useRef(null);
+    const debounceTimeoutRef = useRef(null);
 
     useEffect(() => {
         if (file?.value?.uri) {
@@ -27,12 +28,20 @@ export function PdfContainer({ file }) {
                 setContainerWidth(containerRef.current.offsetWidth);
             }
         };
-
+        const debouncedUpdateWidth = () => {
+            if (debounceTimeoutRef.current) {
+                clearTimeout(debounceTimeoutRef.current);
+            }
+            debounceTimeoutRef.current = setTimeout(updateWidth, 100);
+        };
+        // Initial width
         updateWidth();
-        window.addEventListener('resize', updateWidth);
-        
+        window.addEventListener("resize", debouncedUpdateWidth);
         return () => {
-            window.removeEventListener('resize', updateWidth);
+            window.removeEventListener("resize", debouncedUpdateWidth);
+            if (debounceTimeoutRef.current) {
+                clearTimeout(debounceTimeoutRef.current);
+            }
         };
     }, []);
 
@@ -43,11 +52,7 @@ export function PdfContainer({ file }) {
     return (
         <div className="pdf-container" ref={containerRef}>
             {pdfUrl && containerWidth && (
-                <Document
-                    file={pdfUrl}
-                    onLoadSuccess={onDocumentLoadSuccess}
-                    error={<div>Error loading PDF!</div>}
-                >
+                <Document file={pdfUrl} onLoadSuccess={onDocumentLoadSuccess} error={<div>Error loading PDF!</div>}>
                     {Array.from(new Array(numPages), (el, index) => (
                         <Page
                             key={`page_${index + 1}`}
