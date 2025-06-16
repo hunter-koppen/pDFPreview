@@ -8,10 +8,12 @@
     <icon/>
     <properties>
         <propertyGroup caption="General">
-            <property key="sampleText" type="string" required="false">
-                <caption>Default value</caption>
-                <description>Sample text input</description>
-            </property>
+            <propertyGroup caption="Data">
+                <property key="file" type="file" required="true">
+                    <caption>File</caption>
+                    <description>The file to be previewed</description>
+                </property>
+            </propertyGroup>
         </propertyGroup>
     </properties>
 </widget>

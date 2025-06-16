@@ -1,8 +1,8 @@
 import { createElement } from "react";
 
-import { HelloWorldSample } from "./components/HelloWorldSample";
+import { PdfContainer } from "./components/PdfContainer";
 import "./ui/PDFPreview.css";
 
-export function PDFPreview({ sampleText }) {
-    return <HelloWorldSample sampleText={sampleText} />;
+export function PDFPreview({ file }) {
+    return <PdfContainer file={file} />;
 }
