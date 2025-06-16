@@ -13,6 +13,8 @@ export function PdfContainer({ file }) {
     useEffect(() => {
         if (file?.value?.uri) {
             setPdfUrl(file.value.uri);
+        } else {
+            setPdfUrl(null);
         }
     }, [file]);
 
